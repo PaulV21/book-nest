@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookNest - Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .add-to-cart-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background-color: #2b2b2b;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 22px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s;
+            z-index: 10;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #444;
+        }
+        .chat-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-button-icon {
+            color: white;
+            font-size: 24px;
+        }
+
+        /* Chat Window Styles */
+        .chat-window {
+            position: fixed;
+            bottom: 90px;
+            left: -400px;
+            width: 350px;
+            height: 500px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-window.open {
+            left: 20px;
+        }
+
+        .chat-header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .chat-close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .chat-send-btn {
+            background-color: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+         .cart-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cart-popup-content {
+            background-color: white;
+            width: 400px;
+            max-width: 90%;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .cart-popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .cart-close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .cart-items {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .cart-item-details {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .cart-item-remove {
+            background: none;
+            border: none;
+            color: #ff4444;
+            cursor: pointer;
+        }
+
+        .cart-total {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .cart-checkout-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #1a1a1a;
+            color: white;
+            border: none;
+            margin-top: 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+            .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        background-color: white;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-icon {
+            color: white;
+            font-size: 14px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: #333;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .cart-button {
+            background-color: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            padding: 20px 40px;
+            background-color: white;
+        }
+
+        .search-bar {
+            width: 100%;
+            max-width: 800px;
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+        }
+
+        .shop-content {
+            display: flex;
+            max-width: 1400px;
+            margin: 20px auto;
+            gap: 30px;
+        }
+
+        .filters-section {
+            width: 250px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .filter-group {
+            margin-bottom: 20px;
+        }
+
+        .filter-group h3 {
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+            color: #666;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-checkbox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .filter-checkbox input {
+            margin-right: 10px;
+        }
+
+        .products-grid {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .book-card {
+            background-color: white;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: 350px;
+            transition: transform 0.3s ease;
+        }
+
+        .book-card:hover {
+            transform: scale(1.03);
+        }
+
+        .book-img {
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .book-info {
+            padding: 15px;
+        }
+
+        .book-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .book-price {
+            font-weight: 400;
+            color: #666;
+        }
+
+        .book-img-1 { background-image: url('./Atomic-habits.png'); }
+        .book-img-2 { background-image: url('./The-alchemist.png'); }
+        .book-img-3 { background-image: url('./educated.png'); }
+        .book-img-4 { background-image: url('./dune.png'); }
+        .book-img-5 { background-image: url('./pride.png'); }
+        .book-img-6 { background-image: url('./sapiens.png'); }
+        .book-img-7 { background-image: url('./mockingbird.png'); }
+        .book-img-8 { background-image: url('./subtle_art.png'); }
+
+        @media (max-width: 1200px) {
+            .products-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .shop-content {
+                flex-direction: column;
+            }
+
+            .filters-section {
+                width: 100%;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Chat Button -->
+    <div class="chat-button" id="chatButton">
+        <span class="chat-button-icon">💬</span>
+    </div>
+
+    <!-- Chat Window -->
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <h3>BookNest Support</h3>
+            <button class="chat-close-btn" id="chatCloseBtn">&times;</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <p>Welcome to BookNest support! How can we help you today?</p>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type your message...">
+            <button class="chat-send-btn" id="chatSendBtn">Send</button>
+        </div>
+    </div>
+
+    <div class="cart-popup" id="cartPopup">
+        <div class="cart-popup-content">
+            <div class="cart-popup-header">
+                <h3>Your Cart</h3>
+                <button class="cart-close-btn" id="closeCartBtn">&times;</button>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items will be dynamically added here -->
+                <p>Your cart is empty.</p>
+            </div>
+            <div class="cart-total" id="cartTotal">
+                Total: PHP 0.00
+            </div>
+            <button class="cart-checkout-btn">Checkout</button>
+        </div>
+    </div>
+    <header class="header">
+        <div class="logo">
+            <a href="index.html">
+                <img src="logo.jpeg" alt="BookNest Logo" style="max-width: 50px; max-height: 50px;">
+            </a>
+        </div>
+        <nav class="nav">
+            <a href="product-page.html">Shop</a>
+            <a href="contacts-page.html">Contact</a>
+            <a href="about-page.html">About</a>
+        </nav>
+        <button class="cart-button">Cart 0</button>
+    </header>
+
+    <div class="search-container">
+        <input type="text" class="search-bar" placeholder="Search for books, authors, categories...">
+    </div>
+
+    <div class="shop-content">
+        <aside class="filters-section">
+            <div class="filter-group">
+                <h3>Categories</h3>
+                <div class="filter-options">
+                    <div class="filter-checkbox">
+                        <input type="checkbox" id="category1">
+                        <label for="category1">Textbooks</label>
+                    </div>
+                    <div class="filter-checkbox">
+                        <input type="checkbox" id="category2">
+                        <label for="category2">Fiction</label>
+                    </div>
+                    <div class="filter-checkbox">
+                        <input type="checkbox" id="category3">
+                        <label for="category3">Non-Fiction</label>
+                    </div>
+                    <div class="filter-checkbox">
+                        <input type="checkbox" id="category4">
+                        <label for="category4">Reference</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h3>Price Range</h3>
+                <div class="filter-options">
+                    <div class="filter-checkbox">
+                        <input type="checkbox" id="price1">
+                        <label for="price1">PHP 0 - 200</label>
+                    </div>
+                    <div class="filter-checkbox">
+                        <input type="checkbox" id="price2">
+                        <label for="price2">PHP 201 - 500</label>
+                    </div>
+                    <div class="filter-checkbox">
+                        <input type="checkbox" id="price3">
+                        <label for="price3">PHP 501 - 1000</label>
+                    </div>
+                    <div class="filter-checkbox">
+                        <input type="checkbox" id="price4">
+                        <label for="price4">PHP 1000+</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h3>Condition</h3>
+                <div class="filter-options">
+                    <div class="filter-checkbox">
+                        <input type="checkbox" id="condition1">
+                        <label for="condition1">Brand New</label>
+                    </div>
+                    <div class="filter-checkbox">
+                        <input type="checkbox" id="condition2">
+                        <label for="condition2">Like New</label>
+                    </div>
+                    <div class="filter-checkbox">
+                        <input type="checkbox" id="condition3">
+                        <label for="condition3">Good</label>
+                    </div>
+                    <div class="filter-checkbox">
+                        <input type="checkbox" id="condition4">
+                        <label for="condition4">Acceptable</label>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="products-grid">
+            <div class="book-card" onclick="window.location.href='product-detail1.html'">
+                <div class="book-img book-img-1"></div>
+                <div class="book-info">
+                    <h3 class="book-title">Atomic habits</h3>
+                    <p class="book-price">PHP 750.00</p>
+                </div>
+                <button class="add-to-cart-btn" onclick="addToCartFromBtn(event, 'Atomic habits', '750.00')">+</button>
+            </div>
+            <div class="book-card" onclick="window.location.href='product-detail2.html'">
+                <div class="book-img book-img-2"></div>
+                <div class="book-info">
+                    <h3 class="book-title">The Alchemist</h3>
+                    <p class="book-price">PHP 450.00</p>
+                </div>
+                <button class="add-to-cart-btn" onclick="addToCartFromBtn(event, 'The Alchemist', '450.00')">+</button>
+            </div>
+            <div class="book-card" onclick="window.location.href='product-detail3.html'">
+                <div class="book-img book-img-3"></div>
+                <div class="book-info">
+                    <h3 class="book-title">Educated: A Memoir</h3>
+                    <p class="book-price">PHP 680.00</p>
+                </div>
+                <button class="add-to-cart-btn" onclick="addToCartFromBtn(event, 'Educated', '680.00')">+</button>
+            </div>
+            <div class="book-card" onclick="window.location.href='product-detail4.html'">
+                <div class="book-img book-img-4"></div>
+                <div class="book-info">
+                    <h3 class="book-title">Dune</h3>
+                    <p class="book-price">PHP 550.00</p>
+                </div>
+                <button class="add-to-cart-btn" onclick="addToCartFromBtn(event, 'Dune', '550.00')">+</button>
+            </div>
+            <div class="book-card" onclick="window.location.href='product-detail5.html'">
+                <div class="book-img book-img-5"></div>
+                <div class="book-info">
+                    <h3 class="book-title">Pride and Prejudice</h3>
+                    <p class="book-price">PHP 350.00</p>
+                </div>
+                <button class="add-to-cart-btn" onclick="addToCartFromBtn(event, 'Pride and Prejudice', '350.00')">+</button>
+            </div>
+            <div class="book-card" onclick="window.location.href='product-detail6.html'">
+                <div class="book-img book-img-6"></div>
+                <div class="book-info">
+                    <h3 class="book-title">Sapiens: A Brief History of...</h3>
+                    <p class="book-price">PHP 900.00</p>
+                </div>
+                <button class="add-to-cart-btn" onclick="addToCartFromBtn(event, 'Sapiens', '900.00')">+</button>
+            </div>
+            <div class="book-card" onclick="window.location.href='product-detail7.html'">
+                <div class="book-img book-img-7"></div>
+                <div class="book-info">
+                    <h3 class="book-title">To Kill a Mockingbird</h3>
+                    <p class="book-price">PHP 800.00</p>
+                </div>
+                <button class="add-to-cart-btn" onclick="addToCartFromBtn(event, 'To kill a mockingbird', '800.00')">+</button>
+            </div>
+            <div class="book-card" onclick="window.location.href='product-detail8.html'">
+                <div class="book-img book-img-8"></div>
+                <div class="book-info">
+                    <h3 class="book-title">The Subtle Art of Not Giving a ...</h3>
+                    <p class="book-price">PHP 1200.00</p>
+                </div>
+                <button class="add-to-cart-btn" onclick="addToCartFromBtn(event, 'The Subtle Art of Not Giving a ...', '1200.00')">+</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Search functionality
+        const searchBar = document.querySelector('.search-bar');
+        const bookCards = document.querySelectorAll('.book-card');
+
+        searchBar.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+
+            bookCards.forEach(card => {
+                const title = card.querySelector('.book-title').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Filter functionality
+        const categoryCheckboxes = document.querySelectorAll('input[id^="category"]');
+        const priceCheckboxes = document.querySelectorAll('input[id^="price"]');
+        const conditionCheckboxes = document.querySelectorAll('input[id^="condition"]');
+
+        function applyFilters() {
+            const selectedCategories = Array.from(categoryCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.nextElementSibling.textContent.toLowerCase());
+
+            const selectedPrices = Array.from(priceCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.nextElementSibling.textContent);
+
+            const selectedConditions = Array.from(conditionCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.nextElementSibling.textContent.toLowerCase());
+
+            bookCards.forEach(card => {
+                const title = card.querySelector('.book-title').textContent.toLowerCase();
+                const price = card.querySelector('.book-price').textContent;
+
+                const categoryMatch = selectedCategories.length === 0 || 
+                    selectedCategories.some(cat => title.includes(cat));
+
+                                const priceMatch = selectedPrices.length === 0 || 
+                    selectedPrices.some(priceRange => {
+                    // Extract the price range values
+                    const priceText = priceRange.trim();
+                    const cardPrice = parseFloat(price.replace('PHP ', ''));
+                    
+                    // Handle different price formats
+                    if (priceText.includes('+')) {
+                        // For ranges like "PHP 1000+"
+                        const minPrice = parseFloat(priceText.replace('PHP ', '').replace('+', ''));
+                        return cardPrice >= minPrice;
+                    } else if (priceText.includes(' - ')) {
+                        // For ranges like "PHP 201 - 500"
+                        const [minStr, maxStr] = priceText.replace('PHP ', '').split(' - ');
+                        const min = parseFloat(minStr);
+                        const max = parseFloat(maxStr);
+                        return cardPrice >= min && cardPrice <= max;
+                    }
+                    return false;
+                });
+
+                const conditionMatch = selectedConditions.length === 0;
+
+                card.style.display = categoryMatch && priceMatch && conditionMatch ? 'block' : 'none';
+            });
+        }
+
+        // Add event listeners to all checkboxes
+        [...categoryCheckboxes, ...priceCheckboxes, ...conditionCheckboxes].forEach(checkbox => {
+            checkbox.addEventListener('change', applyFilters);
+        });
+    </script>
+    <script>
+        // Cart Functionality
+        const cartButton = document.querySelector('.cart-button');
+        const cartPopup = document.getElementById('cartPopup');
+        const closeCartBtn = document.getElementById('closeCartBtn');
+        const cartItems = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+
+        // Sample cart array to store items
+        let cart = [];
+
+        // Function to open cart popup
+        cartButton.addEventListener('click', () => {
+            cartPopup.style.display = 'flex';
+            updateCart();
+        });
+
+        // Function to close cart popup
+        closeCartBtn.addEventListener('click', () => {
+            cartPopup.style.display = 'none';
+        });
+
+        // Function to add item to cart
+        function addToCart(title, price) {
+            cart.push({ title, price });
+            updateCart();
+            // Update cart button count
+            cartButton.textContent = `Cart ${cart.length}`;
+        }
+
+        // Function to remove item from cart
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+            // Update cart button count
+            cartButton.textContent = `Cart ${cart.length}`;
+        }
+
+        // Function to update cart display
+        function updateCart() {
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p>Your cart is empty.</p>';
+                cartTotal.textContent = 'Total: PHP 0.00';
+            } else {
+                cartItems.innerHTML = cart.map((item, index) => `
+                    <div class="cart-item">
+                        <div class="cart-item-details">
+                            <strong>${item.title}</strong>
+                            <p>PHP ${item.price}</p>
+                        </div>
+                        <button class="cart-item-remove" onclick="removeFromCart(${index})">Remove</button>
+                    </div>
+                `).join('');
+
+                const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+                cartTotal.textContent = `Total: PHP ${total.toFixed(2)}`;
+            }
+        }
+
+        // Add event listeners to book cards to add to cart
+        document.querySelectorAll('.book-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const title = card.querySelector('.book-title').textContent;
+                const price = card.querySelector('.book-price').textContent;
+                addToCart(title, price.replace('PHP ', ''));
+            });
+        });
+    </script>
+    <script>
+        const chatButton = document.getElementById('chatButton');
+        const chatWindow = document.getElementById('chatWindow');
+        const chatCloseBtn = document.getElementById('chatCloseBtn');
+        const chatInput = document.getElementById('chatInput');
+        const chatSendBtn = document.getElementById('chatSendBtn');
+        const chatMessages = document.getElementById('chatMessages');
+
+        // Toggle chat window
+        chatButton.addEventListener('click', () => {
+            chatWindow.classList.toggle('open');
+        });
+
+        // Close chat window
+        chatCloseBtn.addEventListener('click', () => {
+            chatWindow.classList.remove('open');
+        });
+
+        // Send message functionality
+        chatSendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const messageText = chatInput.value.trim();
+            if (messageText) {
+                // Add user message
+                const userMessageElement = document.createElement('div');
+                userMessageElement.innerHTML = `
+                    <p style="text-align: right; color: #1a1a1a; margin-bottom: 10px;">
+                        <strong>You:</strong> ${messageText}
+                    </p>
+                `;
+                chatMessages.appendChild(userMessageElement);
+
+                // Simulate support response (you can replace with actual chat logic)
+                setTimeout(() => {
+                    const supportMessageElement = document.createElement('div');
+                    supportMessageElement.innerHTML = `
+                        <p style="text-align: left; color: #666; margin-bottom: 10px;">
+                            <strong>Support:</strong> Thanks for your message! We'll get back to you soon.
+                        </p>
+                    `;
+                    chatMessages.appendChild(supportMessageElement);
+                    
+                    // Scroll to bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+
+                // Clear input
+                chatInput.value = '';
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>
